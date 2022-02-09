@@ -44,18 +44,22 @@ pub fn game() {
 
 		for {
 			guess = rl.read_line('guess: ') or { '' }.trim_space()
-			if guess.len != 5 && !words.contains(guess) {
-				if guess.contains(' ') { println('tryna cheat? nah fam.') }
-				println('\nbad! try again')
+			if guess.len != 5 {
+				if guess.contains(' ') { 
+					println('word cannot contain spaces')
+					continue
+				}
+				println('\nword needs to have 5 letters')
 			} else {
+				if !words.contains(guess) { 
+					println('not in word list')
+					continue
+				}
 				break
 			}
 		}
 
 		mut end_str := []Letter{len:5}
-
-		// if indexes don't line up BUT it is in the word -> yellow
-		// if indexes don't line up BUT there's multiple AND there's more than in word, last one -> yellow
 
 		// mark greens
 		for j, char in guess {
@@ -97,15 +101,15 @@ pub fn game() {
 			if end_str[l].color == .unknown { end_str[l].color = .gray }
 		}
 
+		game[i] = end_str.to_string()
+
+		print_board(i, game)
+
 		if guess == word {
 			stopwatch.stop()
 			win = true
 			break
 		}
-
-		game[i] = end_str.to_string()
-
-		print_board(i, game)
 
 	}
 
