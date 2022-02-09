@@ -1,3 +1,5 @@
+// Copyright 2022 MrsHerobrine
+
 module util
 
 import term

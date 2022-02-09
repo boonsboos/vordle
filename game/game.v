@@ -1,3 +1,5 @@
+// Copright 2022 MrsHerobrine
+
 module game
 
 import util
@@ -23,6 +25,8 @@ pub fn random_word() string {
 }
 
 pub fn game() {
+
+	println("welcome to vordle.")
 
 	mut stopwatch := time.new_stopwatch()
 
