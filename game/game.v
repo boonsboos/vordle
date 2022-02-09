@@ -30,8 +30,7 @@ pub fn game() {
 
 	mut win := false
 	mut game := []string{len:6}
-	//word := random_word()
-	word := 'umami'
+	word := random_word()
 
 	stopwatch.start()
 
@@ -60,23 +59,30 @@ pub fn game() {
 			else { end_str[j] = Letter{char, .unknown} }
 		}
 
-		mut occ_word = 0
-		mut occ_guess = 0
+		mut occ_word := 0
+		mut occ_guess := 0
+		mut skip_char := byte(0)
 		// mark yellows
 		for k, char in guess {
 
-			if end_str[k].color == .green { continue }
+			if end_str[k].color == .green { 
+				skip_char = end_str[k].char
+				continue
+			}
 
 			occ_word = word.count([char].bytestr())
 			occ_guess = guess.count([char].bytestr())
 			
-			contains = word.contains([char].bytestr())
+			contains := word.contains([char].bytestr())
 
 			if contains { end_str[k].color = .yellow }
 
 			// check if the character occurs more than once, otherwise keep it yellow
-			if contains && occ_guess > occ_word {
-				end_str[k].color = .gray 
+			if contains && occ_guess != occ_word && char == skip_char{
+				end_str[k].color = .gray
+			} else if contains && char != skip_char && occ_guess != occ_word {
+				end_str[k].color = .yellow 
+				skip_char = char
 			} else if contains && occ_guess == occ_word {
 				end_str[k].color = .yellow 
 			}
@@ -100,7 +106,7 @@ pub fn game() {
 	}
 
 	if win {
-		println('${count_nulls(game)}/6 | you took ${int(stopwatch.elapsed().minutes())} minutes')
+		println('${count_nulls(game)}/6 | you took ${format_times(stopwatch)}!')
 		println('you win! word was ${word}')
 	} else {
 		println('X/6')
@@ -134,4 +140,15 @@ fn (arr []Letter) to_string() string {
 
 fn delta_chars(str1 string, str2 string, compare byte) int {
 	return str1.count([compare].bytestr()) - str2.count([compare].bytestr())
+}
+
+fn format_times(stopwatch time.StopWatch) string {
+	time := int(stopwatch.elapsed().minutes())
+	if time == 0 {
+		return "<1 minutes"
+	} else if time == 1 {
+		return "~1 minute"
+	} else {
+		return "~$time minutes"
+	}
 }
