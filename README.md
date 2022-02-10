@@ -1,6 +1,6 @@
 # vordle
 
-CLI Wordle clone, whipped up in an afternoon.
+CLI Wordle clone, whipped up in an afternoon (+ bug fixes the day after).
 
 Also check out [heatwave's wordle solver](https://github.com/heatwave0/wordler)! It's pretty cool.
 

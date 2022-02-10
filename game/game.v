@@ -27,6 +27,7 @@ pub fn random_word() string {
 pub fn game() {
 
 	println("welcome to vordle.")
+	println("run `vordle help` if you don't know how to play")
 
 	mut stopwatch := time.new_stopwatch()
 
@@ -35,7 +36,7 @@ pub fn game() {
 	mut win := false
 	mut game := []string{len:6}
 	word := random_word()
-
+	//word := 'salad' // this for testing
 	stopwatch.start()
 
 	for i in 0..game.len {
@@ -60,6 +61,11 @@ pub fn game() {
 		}
 
 		mut end_str := []Letter{len:5}
+		mut char_indices := map[byte][]int{} // takes a character and an index
+		
+		for p, char in guess {
+			char_indices[char] << p
+		}
 
 		// mark greens
 		for j, char in guess {
@@ -69,31 +75,40 @@ pub fn game() {
 
 		mut occ_word := 0
 		mut occ_guess := 0
-		mut skip_char := byte(0)
 		// mark yellows
 		for k, char in guess {
-
-			if end_str[k].color == .green { 
-				skip_char = end_str[k].char
-				continue
-			}
 
 			occ_word = word.count([char].bytestr())
 			occ_guess = guess.count([char].bytestr())
 			
 			contains := word.contains([char].bytestr())
 
-			if contains { end_str[k].color = .yellow }
+			if end_str[k].color == .green || end_str[k].color == .yellow { continue }
 
-			// check if the character occurs more than once, otherwise keep it yellow
-			if contains && occ_guess != occ_word && char == skip_char{
+			if contains && occ_guess > occ_word && count_greens(end_str) <= 1 {
 				end_str[k].color = .gray
-			} else if contains && char != skip_char && occ_guess != occ_word {
-				end_str[k].color = .yellow 
-				skip_char = char
+
+				idx := char_indices[char][1]
+				ix := char_indices[char][0]
+
+				if end_str[ix].color != .green && end_str[idx].color != .green {
+					end_str[idx].color = .yellow
+				}
+			} else if contains && occ_guess > occ_word {
+				end_str[k].color = .gray
+
+				idx := char_indices[char][1]
+				ix := char_indices[char][0]
+
+				if end_str[ix].color != .green && end_str[idx].color != .green {
+					end_str[idx].color = .yellow
+				}
 			} else if contains && occ_guess == occ_word {
-				end_str[k].color = .yellow 
+				end_str[k].color = .yellow
+			} else if contains && occ_guess < occ_word {
+				end_str[k].color = .yellow
 			}
+
 		}
 
 		// mark grays
@@ -146,17 +161,21 @@ fn (arr []Letter) to_string() string {
 	return str
 }
 
-fn delta_chars(str1 string, str2 string, compare byte) int {
-	return str1.count([compare].bytestr()) - str2.count([compare].bytestr())
-}
-
 fn format_times(stopwatch time.StopWatch) string {
 	time := int(stopwatch.elapsed().minutes())
 	if time == 0 {
-		return "<1 minutes"
+		return "<1 minute"
 	} else if time == 1 {
 		return "~1 minute"
 	} else {
 		return "~$time minutes"
 	}
+}
+
+fn count_greens(arr []Letter) int {
+	mut a := 0
+	for i in arr {
+		if i.color == .green { a++ }
+	}
+	return a
 }
