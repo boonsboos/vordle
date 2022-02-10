@@ -7,6 +7,9 @@ import game
 import os
 
 fn main() {
+
+	mut game := game.Game{}
+
 	if os.args.len < 2 {
 		game.game()
 	} else {
@@ -21,6 +24,14 @@ fn main() {
 				println('if the letter is in the right spot, it\'ll become green')
 				println('if it\'s not the right letter, it\'ll be gray')
 				println('the goal is to guess the word within 6 turns')
+			}
+			'dict' { 
+				game.dictionary = true
+				game.game()
+			}
+			'dictionary' {
+				game.dictionary = true
+				game.game()
 			}
 			else { game.game() }
 		}

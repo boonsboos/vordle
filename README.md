@@ -11,6 +11,9 @@ vordle [about|help]
       - shows the name and developer
     help
       - explains how to play the game
+    dict(ionary)
+      - shows the definition of a word after game
+      - requires internet connection and is not able to show every word
 ```
 Not passing any argument or passing one that is unknown starts the game.
 

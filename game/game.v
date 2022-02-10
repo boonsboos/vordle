@@ -20,11 +20,20 @@ fn (l Letter) str() string {
 	return util.letter_with_color(l.color, l.char)
 }
 
-pub fn random_word() string {
-	return words[rand.int_in_range(0, words.len)]
+fn (arr []Letter) to_string() string {
+	mut str := ''
+	for i in arr {
+		str += i.str()
+	}
+	return str
 }
 
-pub fn game() {
+pub struct Game {
+pub mut:
+	dictionary	bool
+}
+
+pub fn (g Game) game() {
 
 	println("welcome to vordle.")
 	println("run `vordle help` if you don't know how to play")
@@ -131,9 +140,11 @@ pub fn game() {
 	if win {
 		println('${count_nulls(game)}/6 | you took ${format_times(stopwatch)}!')
 		println('you win! word was ${word}')
+		if g.dictionary{ get_definition(word) }
 	} else {
 		println('X/6')
 		println('you lost! word was ${word}')
+		if g.dictionary { get_definition(word) }
 	}
 
 }
@@ -153,23 +164,15 @@ fn count_nulls(array []string) int {
 	return idx
 }
 
-fn (arr []Letter) to_string() string {
-	mut str := ''
-	for i in arr {
-		str += i.str()
-	}
-	return str
+fn format_times(stopwatch time.StopWatch) string {
+	elapsed := stopwatch.elapsed()
+	mins := int(elapsed.minutes())
+	secs := int(elapsed.seconds()) % 60
+	return "you took $mins:$secs"
 }
 
-fn format_times(stopwatch time.StopWatch) string {
-	time := int(stopwatch.elapsed().minutes())
-	if time == 0 {
-		return "<1 minute"
-	} else if time == 1 {
-		return "~1 minute"
-	} else {
-		return "~$time minutes"
-	}
+pub fn random_word() string {
+	return words[rand.intn(words.len)]
 }
 
 fn count_greens(arr []Letter) int {
