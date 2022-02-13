@@ -168,6 +168,7 @@ fn format_times(stopwatch time.StopWatch) string {
 	elapsed := stopwatch.elapsed()
 	mins := int(elapsed.minutes())
 	secs := int(elapsed.seconds()) % 60
+    if secs < 10 { return "$mins:0$secs"
 	return "$mins:$secs"
 }
 
